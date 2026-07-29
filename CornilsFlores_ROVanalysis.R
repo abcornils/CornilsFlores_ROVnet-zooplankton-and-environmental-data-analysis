@@ -438,7 +438,7 @@ top_species_Abund <- species_scores_Abund[order(-species_scores_Abund$magnitude)
 
 # environmental factors (only significant)
 en_Abund <- envfit(nmds_ROV, ps122_environ_nMDS, permutations = 999, na.rm = TRUE)
-en_coord_cont_Abund <- as.data.frame(scores(en_Abund, "vectors")) * ordiArrowMul(en_Abund)
+en_coord_cont_Abund <- as.data.frame(scores(en_Abund, "vectors")) * ordiArrowMul(en_Abund, fill = 0.07)
 pvals_Abund <- as.data.frame(en_Abund$vectors$pvals)
 en_coord_cont_Abund$pval <- pvals_Abund[, 1]
 en_coord_cont_Abund <- en_coord_cont_Abund[en_coord_cont_Abund$pval < 0.01, ]
