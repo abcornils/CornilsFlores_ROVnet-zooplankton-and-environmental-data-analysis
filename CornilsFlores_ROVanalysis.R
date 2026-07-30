@@ -349,7 +349,7 @@ patch <- ps122_rov_sst + ps122_rov_sss + ps122_rov_mld + ps122_rov_par +
 # FIGURE 1 (final):
 map1 + patch + plot_layout(ncol = 1, heights = c(1, 2)) + plot_annotation(tag_levels = 'A')
 
-ggsave("Figure_1.pdf", device="pdf", scale = 2, dpi=300, limitsize = TRUE, bg = NULL, width = 4, height = 5)
+#ggsave("Figure_1.pdf", device="pdf", scale = 2, dpi=300, limitsize = TRUE, bg = NULL, width = 4, height = 5)
 #Graphs are arranged in InkScape
 
 ## =============================================================================
@@ -421,15 +421,6 @@ rect.hclust(cluster_result_Abund, k = 3, border = "red")
 #dev.off()
 data.scores_Abund$Cluster <- factor(cutree(cluster_result_Abund, k = 3))
 
-# PERMANOVA
-data.scores_AB <- data.scores_Abund %>% dplyr::select(-c(NMDS1, NMDS2, NMDS3))
-adonis_Abund <- adonis2(vegdist(wide10log, method = "bray") ~ Regime, data = data.scores_AB)
-print(adonis_Abund)
-
-# BETADISPER
-bd_Abund <- betadisper(vegdist(sqrt(wide10log), method = "bray"), data.scores_AB$Regime)
-anova(bd_Abund)
-
 # species scores
 species_scores_Abund <- as.data.frame(scores(nmds_ROV, display = "species"))
 species_scores_Abund$species <- rownames(species_scores_Abund)
@@ -492,33 +483,6 @@ plot(1:10, wcss, type = "b", pch = 19,
 library(vegan)
 data.scores_AB <- dplyr::select(data.scores_Abund, -NMDS1, -NMDS2, -NMDS3)
 
-# PERMANOVA with both predictors
-adonis_Abund_combined <- adonis2(vegdist(wide10log, method = "bray") ~ Region + Regime, data = data.scores_AB)
-print(adonis_Abund_combined)
-
-# main effects and interactions of Region and Regime (not depth_stratum)
-adonis2(vegdist(wide10log, method = "bray") ~ Region + Regime + Region:Regime, data = data.scores_AB, by = "terms")
-
-# 3 main variables + interactions
-# requires enough replicates in all combinations (each Region x Regime x depth
-# should have >= 2 samples, otherwise unstable)
-adonis2(vegdist(wide10log, method = "bray") ~ Region * Regime * depth_stratum,
-        data = data.scores_AB,
-        by = "terms")
-
-# Final PERMANOVA
-# interactions could not be used, insufficient samples
-adonis2(
-  vegdist(wide10log, method = "bray") ~ Regime * depth_stratum,
-  data = data.scores_AB,
-  by = "terms"
-)
-
-# betadisper, to check whether dispersion is homogeneous
-vegan::betadisper(vegdist(wide10log, "bray"), data.scores_AB$Region)
-vegan::betadisper(vegdist(wide10log, "bray"), data.scores_AB$Regime)
-vegan::betadisper(vegdist(wide10log, "bray"), data.scores_AB$depth_stratum)
-
 data.scores_Abund$depth_fill <- dplyr::recode(data.scores_Abund$depth_stratum,
                                        "0 m" = "IWI",
                                        "10 m" = "10 m")
@@ -560,7 +524,7 @@ nmds_rov <- ggplot(data = data.scores_Abund, aes(x = NMDS1, y = NMDS2)) +
     legend.key = element_blank()
   )
 nmds_rov
-#ggsave("nMDS_ROV_env_m_Species_new.pdf", device="pdf", scale=2, dpi=300, limitsize = TRUE, bg = NULL)
+#ggsave("nMDS_ROV_env_m_Species_new_a.pdf", device="pdf", scale=2, dpi=300, limitsize = TRUE, bg = NULL)
 
 ## --- PCA of environmental data (feeds Figure 2, panel A) ----------------------
 pca_data <- ps122_environ_nMDS
@@ -1682,14 +1646,22 @@ anova(mod_slope_AB_depth)
 emmeans_AB_depth <- emmeans(mod_slope_AB_depth, pairwise ~ Regime | depth_stratum, adjust = "tukey")
 summary(emmeans_AB_depth$contrasts)
 
+## ===========================    SUPPL. TABLE 5    =============================
+# PERMANOVA; 3 main variables
+# requires enough replicates in all combinations (each Region + Regime + depth
+# interactions could not be used, insufficient samples, should have >= 2 samples, otherwise unstable)
+adonis2(vegdist(wide10log, method = "bray") ~ Region + Regime + depth_stratum,
+        data = data.scores_AB,
+        by = "terms")
+
+#Region was excluded due to uneven sampling. 
+adonis2(vegdist(wide10log, method = "bray") ~ Regime * depth_stratum,
+        data = data.scores_AB,
+        by = "terms")
+
 ## ===========================    SUPPL. TABLE 6    =============================
 ## Multivariate dispersion homogeneity (PERMDISP), supports the PERMANOVA
 ## results reported for Figure 2 (community composition).
-## NOTE on supplementary numbering: several supplementary tables in the
-## manuscript were compiled outside R and are not part of this script. Within
-## this script: Suppl. Table 2 = abundance/biovolume totals per taxon (two
-## parts, see above), Suppl. Table 6 = this dispersion homogeneity output,
-## Suppl. Table 7 = NBSS slopes per sample (see Figure 5 section above).
 ## =============================================================================
 bd_region <- vegan::betadisper(
   vegdist(wide10log, method = "bray"),
