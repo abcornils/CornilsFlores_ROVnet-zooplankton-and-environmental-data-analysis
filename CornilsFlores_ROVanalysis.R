@@ -31,6 +31,9 @@
 ##
 ## Note: additional supplementary tables in the manuscript (e.g. Suppl. Table 1)
 ## were compiled outside R and are not part of this script.
+##
+## Note: Year is changed from 2020 to 2019 for data August and September
+## samples, for seasonal succession (visual/plotting convenience only).
 ## -----------------------------------------------------------------------------
 
 ## -----------------------------------------------------------------------
