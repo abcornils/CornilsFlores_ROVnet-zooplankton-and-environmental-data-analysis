@@ -12,9 +12,9 @@ Serdar Sakinan, Fokje L. Schaafsma, Katrin Schmidt, Katyanne M. Shoemaker,
 Martina Vortkamp, Barbara Niehoff 
 published in Nature Ecology & Evolution (2026). 
 
-## `CornilsFlores_ROVanalysis_essential_data.RData`
+## `CornilsFlores_ROVanalysis.RData`
 
-Consolidated source data file required to run `02_run_analysis.R`. Contains the
+Consolidated source data file required to run `CornilsFlores_ROVanalysis.R`. Contains the
 following data frames:
 
 | Object(s) | Content | Source |
@@ -32,7 +32,7 @@ following data frames:
 Loads the RData file above and reproduces every step of the analysis:
 Table 1, Figures 1–5, and Supplementary Tables and Figures.
 
-To run: place both files in the same folder, adjust the `setwd()` path at
+To run: adjust the `setwd()` path at
 the top of the script, and run top to bottom in a fresh R session. A fixed
 random seed (`set.seed(42)`) is set at the start so that all stochastic
 steps (NMDS, permutation tests, bootstrapping) give identical results on
@@ -43,8 +43,7 @@ panels manually in Inkscape.
 
 The analysis code was written by Astrid Cornils. An AI assistant (Claude)
 was used to review, debug, and refactor the final version of the analysis
-script prior to publication — specifically: separating data preparation
-from the analysis script, fixing a package-masking bug (`plyr` vs.
+script prior to publication — specifically: fixing a package-masking bug (`plyr` vs.
 `dplyr`), adding random seeds for reproducibility, and adding section
 headers linking code blocks to the corresponding manuscript Tables/Figures.
 All underlying data processing and statistical analysis choices are the
